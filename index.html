@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cipher Lab</title>
+    <meta
+      name="description"
+      content="Cipher Lab is a classical cryptography workbook for Caesar, Vigenère and substitution ciphers."
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <!-- Brand and safety note frame the tool as an educational, local-only workbench. -->
+      <header class="topbar panel">
+        <div>
+          <p class="eyebrow">The Lab</p>
+          <h1>Cipher Lab</h1>
+        </div>
+        <div class="topbar-note">
+          Educational classical cryptography workspace. Local only and not secure for real data.
+        </div>
+      </header>
+
+      <!-- app.js connects the controls below through their IDs and data-cipher attributes. -->
+      <main class="layout">
+        <section class="workspace panel" aria-label="Cipher workspace">
+          <div class="workspace-head">
+            <div>
+              <p class="section-kicker">Workbench</p>
+              <h2>Classical cipher toolkit</h2>
+            </div>
+          </div>
+
+          <!-- Tab data-cipher values match the data-panel values on each cipher's key controls. -->
+          <div class="tab-list" role="tablist" aria-label="Select cipher">
+            <button class="tab is-active" type="button" data-cipher="caesar" aria-selected="true">Caesar</button>
+            <button class="tab" type="button" data-cipher="vigenere" aria-selected="false">Vigenère</button>
+            <button class="tab" type="button" data-cipher="substitution" aria-selected="false">Substitution</button>
+          </div>
+
+          <!-- One shared mode selector updates state.mode and chooses encrypt or decrypt. -->
+          <div class="mode-row panel-inline">
+            <label for="mode-select">Mode</label>
+            <select id="mode-select">
+              <option value="encrypt">Encrypt</option>
+              <option value="decrypt">Decrypt</option>
+            </select>
+          </div>
+
+          <!-- The active key panel is selected in JavaScript; IDs connect each key to its listener. -->
+          <div class="cipher-panel is-active" data-panel="caesar">
+            <label class="field-label" for="caesar-shift">Shift</label>
+            <div class="shift-row">
+              <input id="caesar-shift" type="range" min="0" max="25" value="3" />
+              <output id="caesar-shift-value" for="caesar-shift">3</output>
+            </div>
+            <div class="caesar-alphabet" aria-label="Caesar alphabet mapping">
+              <p class="alphabet-direction" id="caesar-direction"></p>
+              <div id="caesar-alphabet-map" class="caesar-alphabet-map"></div>
+            </div>
+          </div>
+
+          <div class="cipher-panel" data-panel="vigenere">
+            <label class="field-label" for="vigenere-key">Keyword</label>
+            <input id="vigenere-key" type="text" value="LEMON" maxlength="40" spellcheck="false" />
+            <p id="vigenere-status" class="inline-status" aria-live="polite"></p>
+          </div>
+
+          <div class="cipher-panel" data-panel="substitution">
+            <label class="field-label" for="substitution-key">Substitution alphabet</label>
+            <input id="substitution-key" type="text" value="QWERTYUIOPASDFGHJKLZXCVBNM" maxlength="26" spellcheck="false" />
+            <div class="button-row compact-row">
+              <button id="generate-substitution" type="button" class="secondary-button">Generate random</button>
+              <button id="reset-substitution" type="button" class="secondary-button subdued">Reset</button>
+            </div>
+            <div id="substitution-preview" class="alphabet-preview" aria-live="polite"></div>
+          </div>
+
+          <!-- The message and output are the main workbench inputs; app.js recalculates output on changes. -->
+          <div class="input-block">
+            <div class="field-head">
+              <label for="message-input">Message</label>
+              <button id="clear-input" type="button" class="secondary-button">Clear input</button>
+            </div>
+            <textarea id="message-input" spellcheck="false" placeholder="Write a note to encode or decode…"></textarea>
+          </div>
+
+          <!-- Copy, clear, and swap actions are wired to these controls in app.js. -->
+          <div class="action-row">
+            <button id="swap-input-output" type="button" class="secondary-button">Swap input and output</button>
+          </div>
+
+          <div class="output-block">
+            <div class="field-head output-head">
+              <label for="output-text">Output</label>
+              <button id="copy-output" type="button">Copy output</button>
+            </div>
+            <textarea id="output-text" readonly aria-live="polite"></textarea>
+          </div>
+
+          <div id="cipher-details" class="detail-panel" aria-live="polite"></div>
+        </section>
+
+        <!-- The explanation changes with the selected cipher and stays below the main workspace. -->
+        <section id="cipher-explanation" class="explanation-panel" aria-live="polite"></section>
+
+        <!-- Native details/summary elements provide collapsible analysis without a UI framework. -->
+        <details id="analysis-panel" class="analysis panel">
+          <summary class="analysis-summary">
+            <span>
+              <span class="section-kicker">Analysis</span>
+              <strong>Cryptanalysis</strong>
+            </span>
+            <span class="analysis-toggle-label">Open tools</span>
+          </summary>
+          <div class="analysis-content">
+            <!-- app.js fills the chart and statistics from the current message when analysis opens. -->
+            <section class="analysis-block">
+              <h3>Frequency Analysis</h3>
+              <div id="frequency-chart" class="frequency-chart"></div>
+              <p class="analysis-note">
+                Classical substitution systems often preserve letter statistics. Frequency analysis is useful for spotting patterns,
+                but it is not a guaranteed decryption method.
+              </p>
+            </section>
+
+            <section class="analysis-block">
+              <h3>Text Statistics</h3>
+              <div id="text-statistics" class="stats-grid"></div>
+            </section>
+            <!-- This nested tool is shown only for Caesar; its candidate buttons are generated on demand. -->
+            <details id="bruteforce-panel" class="bruteforce-panel">
+              <summary>Try all 26 shifts</summary>
+              <div id="bruteforce-candidates" class="bruteforce-list"></div>
+            </details>
+          </div>
+        </details>
+      </main>
+    </div>
+
+    <!-- ES modules keep interface logic separate from cipher and analysis implementations. -->
+    <script type="module" src="js/app.js"></script>
+  </body>
+</html>
